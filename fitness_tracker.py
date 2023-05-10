@@ -31,7 +31,7 @@ def accept_package(package):
     dist = get_distance(steps)
     current_time = package[0]
     current_steps = package[1]
-    return f'Время: {current_time}/nКоличество шагов за сегодня: {steps}./nДистанция составила {dist} км./nВы сожгли {get_spent_calories(current_steps, current_time)} ккал./n{get_achievement(dist)}'
+    print(f'Время: {current_time}/nКоличество шагов за сегодня: {steps}./nДистанция составила {dist} км./nВы сожгли {get_spent_calories(current_steps, current_time)} ккал./n{get_achievement(dist)}')
 
 
 def get_achievement(dist):
@@ -71,12 +71,18 @@ def get_spent_calories(current_steps, current_time):
         time_1 = dt.datetime.strptime(current_time, FORMAT)
         time_2 = dt.datetime.strptime(time_list[i - 1], FORMAT)
         dist_delta = current_steps - storage_data[i - 1]
-        V = get_distance(dist_delta) / round(time_1 - time_2)
+        time_delta = time_1 - time_2
+        hour = time_delta.hours + time_delta.minutes / 60 + time_delta.seconds / 3600
+        V = get_distance(dist_delta) / round(hour)
     else:
         time_1 = dt.datetime.strptime(current_time, FORMAT)
         time_2 = dt.datetime.strptime('0:00:00', FORMAT)
-        V = get_distance(current_steps) / round(time_1 - time_2)
-    return K_1 * WEIGHT + (V**2 / HEIGHT) * K_1 * WEIGHT
+        hour_1 = time_1.hour + time_1.minute / 60 + time_1.second / 3600
+        hour_2 = time_2.hour + time_2.minute / 60 + time_2.second / 3600
+        time_delta = hour_1 - hour_2
+        V = get_distance(current_steps) / round(time_delta)
+    print(V)
+    return round(K_1 * WEIGHT + (V**2 / HEIGHT) * K_1 * WEIGHT)
 
 
 package2 = ('9:36:02', 15000)
