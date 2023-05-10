@@ -1,19 +1,84 @@
-# This is a sample Python script.
+import datetime as dt
+import randomtimestamp
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+endDate_1 = dt.time(6, 00, 00)
+endDate_2 = dt.time(12, 00, 00)
+endDate_3 = dt.time(18, 00, 00)
+endDate_4 = dt.time(23, 00, 00)
+
+a = randomtimestamp.random_time()
+# print(a)
+
+HEIGHT = 175
+WEIGHT = 75
+FORMAT = '%H:%M:%S'
+STEP_M = 0.65
+TRANSFER_COEFF = 1000
+K_1 = 0.035
+K_2 = 0.029
+storage_data = {}
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')
-    print(f'Yo, {name}')
-    print(f'Bye, {name}')
-    # Press Ctrl+F8 to toggle the breakpoint.
+def accept_package(package):
+    storage_data_internal = {}
+    if check_correct_data(package[1]) and check_correct_time(package[0]):
+        storage_data_internal[package[0]] = package[1]
+    else:
+        return 'Получен поврежденный пакет данных'
+    print(storage_data_internal)
+    storage_data.update(storage_data_internal)
+    steps = get_step_day(storage_data)
+    dist = get_distance(steps)
+    current_time = package[0]
+    current_steps = package[1]
+    return f'Время: {current_time}/nКоличество шагов за сегодня: {steps}./nДистанция составила {dist} км./nВы сожгли {get_spent_calories(current_steps, current_time)} ккал./n{get_achievement(dist)}'
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+def get_achievement(dist):
+    if dist >= 6.5:
+        achievement = 'Отличный результат! Цель достигнута'
+    elif dist >= 3.9:
+        achievement = 'Неплохо! День был продуктивным.'
+    elif dist >= 2:
+        achievement = 'Маловато, но завтра наверстаем!'
+    else:
+        achievement = 'Лежать тоже полезно. Главное — участие, а не победа!'
+    return achievement
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+def check_correct_data(data):
+    print(data)
+    return True
+
+
+def check_correct_time(time):
+    print(time)
+    return True
+
+
+def get_step_day(dict_steps):
+    return sum(step for step in dict_steps.values())
+
+
+def get_distance(steps):
+    return int((steps * STEP_M) / TRANSFER_COEFF)
+
+
+def get_spent_calories(current_steps, current_time):
+    i = len(storage_data)
+    time_list = storage_data.keys()
+    if i != 1:
+        time_1 = dt.datetime.strptime(current_time, FORMAT)
+        time_2 = dt.datetime.strptime(time_list[i - 1], FORMAT)
+        dist_delta = current_steps - storage_data[i - 1]
+        V = get_distance(dist_delta) / round(time_1 - time_2)
+    else:
+        time_1 = dt.datetime.strptime(current_time, FORMAT)
+        time_2 = dt.datetime.strptime('0:00:00', FORMAT)
+        V = get_distance(current_steps) / round(time_1 - time_2)
+    return K_1 * WEIGHT + (V**2 / HEIGHT) * K_1 * WEIGHT
+
+
+package2 = ('9:36:02', 15000)
+
+accept_package(package2)
