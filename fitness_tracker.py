@@ -65,15 +65,16 @@ def get_distance(steps):
 
 
 def get_spent_calories(current_steps, current_time):
-    i = len(storage_data)
-    time_list = storage_data.keys()
-    if i != 1:
+    time_list = list(storage_data.keys())
+    steps_list = list(storage_data.values())
+    if len(storage_data) != 1:
         time_1 = dt.datetime.strptime(current_time, FORMAT)
-        time_2 = dt.datetime.strptime(time_list[i - 1], FORMAT)
-        dist_delta = current_steps - storage_data[i - 1]
-        time_delta = time_1 - time_2
-        hour = time_delta.hours + time_delta.minutes / 60 + time_delta.seconds / 3600
-        V = get_distance(dist_delta) / round(hour)
+        time_2 = dt.datetime.strptime(time_list[len(storage_data) - 2], FORMAT)
+        dist_delta = current_steps - steps_list[len(storage_data) - 2]
+        hour_1 = time_1.hour + time_1.minute / 60 + time_1.second / 3600
+        hour_2 = time_2.hour + time_2.minute / 60 + time_2.second / 3600
+        time_delta = hour_1 - hour_2
+        V = get_distance(dist_delta) / round(time_delta)
     else:
         time_1 = dt.datetime.strptime(current_time, FORMAT)
         time_2 = dt.datetime.strptime('0:00:00', FORMAT)
@@ -85,6 +86,25 @@ def get_spent_calories(current_steps, current_time):
     return round(K_1 * WEIGHT + (V**2 / HEIGHT) * K_1 * WEIGHT)
 
 
+def time_interval_calculation():
+    print('Nothing')
+
+def Convert(tup, di):
+    di = dict(tup)
+    return di
+
+
+def show_message(time, steps, dist, calories, achievement):
+    print(f'Время: {time}/nКоличество шагов за сегодня: {steps}./nДистанция составила {dist} км./nВы сожгли {calories} ккал./n{achievement}')
+
+
 package2 = ('9:36:02', 15000)
 
+
+package3 = ('11:00:02', 15000)
+
+
 accept_package(package2)
+
+
+accept_package(package3)
