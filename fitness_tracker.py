@@ -64,38 +64,38 @@ def get_distance(steps):
     return int((steps * STEP_M) / TRANSFER_COEFF)
 
 
-def get_spent_calories(current_steps, current_time):
+def get_spent_calories(dist, current_time):
     time_list = list(storage_data.keys())
-    steps_list = list(storage_data.values())
     if len(storage_data) != 1:
-        time_1 = dt.datetime.strptime(current_time, FORMAT)
-        time_2 = dt.datetime.strptime(time_list[len(storage_data) - 2], FORMAT)
-        dist_delta = current_steps - steps_list[len(storage_data) - 2]
-        hour_1 = time_1.hour + time_1.minute / 60 + time_1.second / 3600
-        hour_2 = time_2.hour + time_2.minute / 60 + time_2.second / 3600
-        time_delta = hour_1 - hour_2
-        V = get_distance(dist_delta) / round(time_delta)
+        previous_time = time_list[len(storage_data) - 2]
+        T = time_interval_calculation(current_time, previous_time)
+        V = get_distance(dist) / round(T)
     else:
-        time_1 = dt.datetime.strptime(current_time, FORMAT)
-        time_2 = dt.datetime.strptime('0:00:00', FORMAT)
-        hour_1 = time_1.hour + time_1.minute / 60 + time_1.second / 3600
-        hour_2 = time_2.hour + time_2.minute / 60 + time_2.second / 3600
-        time_delta = hour_1 - hour_2
-        V = get_distance(current_steps) / round(time_delta)
+        T = time_interval_calculation(current_time, '0:00:00')
+        V = get_distance(dist) / round(T)
     print(V)
-    return round(K_1 * WEIGHT + (V**2 / HEIGHT) * K_1 * WEIGHT)
+    return round(K_1 * WEIGHT + (V**2 / HEIGHT) * K_2 * WEIGHT * T * 60)
 
 
-def time_interval_calculation():
-    print('Nothing')
+def time_interval_calculation(current_time, previous_time):
+    time_1 = dt.datetime.strptime(current_time, FORMAT)
+    time_2 = dt.datetime.strptime(previous_time, FORMAT)
+    hour_1 = time_1.hour + time_1.minute / 60 + time_1.second / 3600
+    hour_2 = time_2.hour + time_2.minute / 60 + time_2.second / 3600
+    return hour_1 - hour_2
 
-def Convert(tup, di):
+
+def convert(tup, di):
     di = dict(tup)
     return di
 
 
 def show_message(time, steps, dist, calories, achievement):
-    print(f'Время: {time}/nКоличество шагов за сегодня: {steps}./nДистанция составила {dist} км./nВы сожгли {calories} ккал./n{achievement}')
+    print(f'Время: {time}'
+          f'/nКоличество шагов за сегодня: {steps}.'
+          f'/nДистанция составила {dist} км.'
+          f'/nВы сожгли {calories} ккал.'
+          f'/n{achievement}')
 
 
 package2 = ('9:36:02', 15000)
@@ -103,8 +103,12 @@ package2 = ('9:36:02', 15000)
 
 package3 = ('11:00:02', 15000)
 
+package4 = ('13:13:13', 2000)
+
 
 accept_package(package2)
 
 
 accept_package(package3)
+
+accept_package(package4)
