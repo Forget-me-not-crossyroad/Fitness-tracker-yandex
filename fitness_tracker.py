@@ -12,7 +12,7 @@ calories_list = []
 
 def accept_package(package):
     storage_data_internal = {}
-    if check_correct_data(package[1]) and check_correct_time(package[0]):
+    if check_correct_data(package) and check_correct_time(package):
         storage_data_internal[package[0]] = package[1]
     else:
         return 'Получен поврежденный пакет данных'
@@ -34,11 +34,15 @@ def get_achievement(dist):
     return achievement
 
 
-def check_correct_data(data):
+def check_correct_data(package):
+    if len(package) != 2 or package[0] is None or package[1] is None:
+        return False
     return True
 
 
 def check_correct_time(time):
+    if storage_data != {} and dt.datetime.strptime(time[0], FORMAT) <= dt.datetime.strptime(list(storage_data.keys())[-1], FORMAT):
+        return False
     return True
 
 
@@ -74,11 +78,6 @@ def time_interval_calculation(current_time, previous_time):
     return hour_1 - hour_2
 
 
-def convert(tup, di):
-    di = dict(tup)
-    return di
-
-
 def show_message(time, steps, dist, calories, achievement):
     print(f'Время: {time}'
           f'\nКоличество шагов за сегодня: {steps}.'
@@ -94,6 +93,9 @@ package3 = ('11:00:02', 15000)
 
 
 package4 = ('13:13:13', 15000)
+
+
+package5 = ('10:13:13', 15000)
 
 
 accept_package(package2)
