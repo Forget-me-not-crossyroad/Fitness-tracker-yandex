@@ -10,17 +10,13 @@ K_2 = 0.029
 storage_data = {}
 calories_list = []
 
-def accept_package(package):
-    storage_data_internal = {}
-    if check_correct_data(package) and check_correct_time(package):
-        storage_data_internal[package[0]] = package[1]
-    else:
-        return 'Получен поврежденный пакет данных'
+def proccess_tracker(package):
+    storage_data_internal = accept_pack(package)
     storage_data.update(storage_data_internal)
     steps = get_step_day(storage_data)
     dist = get_distance(steps)
     calories_list.append(get_spent_calories(package[1], package[0]))
-    show_message(package[0], steps, dist, get_calories_day(calories_list), get_achievement(dist))
+    show_message(package[0], steps, get_distance(steps), get_calories_day(calories_list), get_achievement(dist))
 
 def get_achievement(dist):
     if dist >= 6.5:
@@ -33,6 +29,15 @@ def get_achievement(dist):
         achievement = 'Лежать тоже полезно. Главное — участие, а не победа!'
     return achievement
 
+
+def accept_pack(package):
+    storage_data_internal = {}
+    if check_correct_data(package) and check_correct_time(package):
+        storage_data_internal[package[0]] = package[1]
+        return storage_data_internal
+    else:
+        print('Получен поврежденный пакет данных')
+        return None
 
 def check_correct_data(package):
     if len(package) != 2 or package[0] is None or package[1] is None:
@@ -98,10 +103,13 @@ package4 = ('13:13:13', 15000)
 package5 = ('10:13:13', 15000)
 
 
-accept_package(package2)
+proccess_tracker(package2)
 
 
-accept_package(package3)
+proccess_tracker(package3)
 
 
-accept_package(package4)
+proccess_tracker(package4)
+
+
+proccess_tracker(package5)
